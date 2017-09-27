@@ -1,6 +1,7 @@
 //
 // Created by sarkar on 19.06.15.
 //
+
 #include "utils.h"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <boost/functional/hash.hpp>
@@ -11,16 +12,14 @@ using namespace cv;
 namespace od
 {
 
-
   std::vector<std::string> myglob(const std::string &pat)
   {
     using namespace std;
     glob_t glob_result;
     glob(pat.c_str(), GLOB_TILDE, NULL, &glob_result);
     vector<string> ret;
-    for(unsigned int i = 0; i < glob_result.gl_pathc; ++i) {
+    for(unsigned int i = 0; i < glob_result.gl_pathc; ++i)
       ret.push_back(string(glob_result.gl_pathv[i]));
-    }
     globfree(&glob_result);
     return ret;
   }
@@ -30,9 +29,11 @@ namespace od
     for (int r = 0; r < descriptors.rows; r++)
     {
       float norm=0;
-      for (int c = 0; c < descriptors.cols; c++) norm+=(descriptors.at<float>(r, c)*descriptors.at<float>(r, c));
+      for (int c = 0; c < descriptors.cols; c++) 
+        norm+=(descriptors.at<float>(r, c)*descriptors.at<float>(r, c));
       norm = 1.0/sqrt(norm);
-      for (int c = 0; c < descriptors.cols; c++) descriptors.at<float>(r, c)*=norm;
+      for (int c = 0; c < descriptors.cols; c++) 
+        descriptors.at<float>(r, c)*=norm;
     }
   }
 
@@ -46,38 +47,49 @@ namespace od
     int maxRowLength = 0;
 
     std::vector<int> resizeWidth;
-    for (int i = 0; i < N;) {
+    for (int i = 0; i < N;)
+    {
       int thisRowLen = 0;
-      for (int k = 0; k < imagesPerRow; k++) {
+      for (int k = 0; k < imagesPerRow; k++)
+      {
         double aspectRatio = double(vecMat[i].cols) / vecMat[i].rows;
         int temp = int( ceil(resizeHeight * aspectRatio));
         resizeWidth.push_back(temp);
         thisRowLen += temp;
         if (++i == N) break;
       }
-      if ((thisRowLen + edgeThickness * (imagesPerRow + 1)) > maxRowLength) {
+      if ((thisRowLen + edgeThickness * (imagesPerRow + 1)) > maxRowLength)
+      {
         maxRowLength = thisRowLen + edgeThickness * (imagesPerRow + 1);
       }
     }
+
     int windowWidth = maxRowLength;
     cv::Mat canvasImage(windowHeight, windowWidth, CV_8UC3, cv::Scalar(0, 0, 0));
 
-    for (int k = 0, i = 0; i < nRows; i++) {
+    for (int k = 0, i = 0; i < nRows; i++)
+    {
       int y = i * resizeHeight + (i + 1) * edgeThickness;
       int x_end = edgeThickness;
-      for (int j = 0; j < imagesPerRow && k < N; k++, j++) {
+      for (int j = 0; j < imagesPerRow && k < N; k++, j++)
+      {
         int x = x_end;
         cv::Rect roi(x, y, resizeWidth[k], resizeHeight);
         cv::Size s = canvasImage(roi).size();
-        // change the number of channels to three
+
+        /**change the number of channels to three
+          */
         cv::Mat target_ROI(s, CV_8UC3);
-        if (vecMat[k].channels() != canvasImage.channels()) {
-          if (vecMat[k].channels() == 1) {
+        if (vecMat[k].channels() != canvasImage.channels())
+        {
+          if (vecMat[k].channels() == 1)
+          {
             cv::cvtColor(vecMat[k], target_ROI, CV_GRAY2BGR);
           }
         }
         cv::resize(target_ROI, target_ROI, s);
-        if (target_ROI.type() != canvasImage.type()) {
+        if (target_ROI.type() != canvasImage.type())
+        {
           target_ROI.convertTo(target_ROI, canvasImage.type());
         }
         target_ROI.copyTo(canvasImage(roi));
@@ -107,8 +119,11 @@ namespace od
     if (messages.size() == imgs.size()) printmssg = true;
 
     float nImgs=imgs.size();
-    int   imgsInRow=ceil(sqrt(nImgs));     // You can set this explicitly
-    int   imgsInCol=ceil(nImgs/imgsInRow); // You can set this explicitly
+
+    /** imgsInRow and imgsInCol can be set explicitly.
+      */
+    int imgsInRow=ceil(sqrt(nImgs));
+    int imgsInCol=ceil(nImgs/imgsInRow);
 
     int resultImgW=cellSize.width*imgsInRow;
     int resultImgH=cellSize.height*imgsInCol;
@@ -157,38 +172,48 @@ namespace od
     int maxRowLength = 0;
 
     std::vector<int> resizeWidth;
-    for (int i = 0; i < N;) {
+    for (int i = 0; i < N;)
+    {
       int thisRowLen = 0;
-      for (int k = 0; k < imagesPerRow; k++) {
+      for (int k = 0; k < imagesPerRow; k++)
+      {
         double aspectRatio = double(vecMat[i].cols) / vecMat[i].rows;
         int temp = int( ceil(resizeHeight * aspectRatio));
         resizeWidth.push_back(temp);
         thisRowLen += temp;
         if (++i == N) break;
       }
-      if ((thisRowLen + edgeThickness * (imagesPerRow + 1)) > maxRowLength) {
+      if ((thisRowLen + edgeThickness * (imagesPerRow + 1)) > maxRowLength)
+      {
         maxRowLength = thisRowLen + edgeThickness * (imagesPerRow + 1);
       }
     }
     int windowWidth = maxRowLength;
     cv::Mat canvasImage(windowHeight, windowWidth, CV_8UC3, cv::Scalar(0, 0, 0));
 
-    for (int k = 0, i = 0; i < nRows; i++) {
+    for (int k = 0, i = 0; i < nRows; i++)
+    {
       int y = i * resizeHeight + (i + 1) * edgeThickness;
       int x_end = edgeThickness;
-      for (int j = 0; j < imagesPerRow && k < N; k++, j++) {
+      for (int j = 0; j < imagesPerRow && k < N; k++, j++)
+      {
         int x = x_end;
         cv::Rect roi(x, y, resizeWidth[k], resizeHeight);
         cv::Size s = canvasImage(roi).size();
-        // change the number of channels to three
+
+        /**change the number of channels to three
+          */
         cv::Mat target_ROI(s, CV_8UC3);
-        if (vecMat[k].channels() != canvasImage.channels()) {
-          if (vecMat[k].channels() == 1) {
+        if (vecMat[k].channels() != canvasImage.channels())
+        {
+          if (vecMat[k].channels() == 1)
+          {
             cv::cvtColor(vecMat[k], target_ROI, CV_GRAY2BGR);
           }
         }
         cv::resize(target_ROI, target_ROI, s);
-        if (target_ROI.type() != canvasImage.type()) {
+        if (target_ROI.type() != canvasImage.type())
+        {
           target_ROI.convertTo(target_ROI, canvasImage.type());
         }
         target_ROI.copyTo(canvasImage(roi));
