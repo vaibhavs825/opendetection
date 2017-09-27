@@ -30,15 +30,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef OPENDETECTION_ODALGORITHMBASE_H
 #define OPENDETECTION_ODALGORITHMBASE_H
-#include<iostream>
+#include <iostream>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-
 
 namespace od
 {
 
-  /** \brief The base of all algorithm classes
+  /** \brief The base of all algorithm classes.
    *
    * \author Kripasindhu Sarkar
    *
