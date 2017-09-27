@@ -20,33 +20,34 @@
 
 namespace bf = boost::filesystem;
 
-/** \brief misclenious helping functions; will be refactored later
+/** \brief miscellaneous helping functions; will be refactored later
    *
    * \author Kripasindhu Sarkar
    *
    */
 
-
-#define X_DEFINE_ENUM_WITH_STRING_CONVERSIONS_TOSTRING_CASE(r, data, elem)    \
+#define X_DEFINE_ENUM_WITH_STRING_CONVERSIONS_TOSTRING_CASE(r, data, elem)
     case elem : return BOOST_PP_STRINGIZE(elem);
 
-#define OD_DEFINE_ENUM_WITH_STRING_CONVERSIONS(name, enumerators)                \
-    enum name {                                                               \
-        BOOST_PP_SEQ_ENUM(enumerators)                                        \
-    };                                                                        \
-                                                                              \
-    inline const char* enumToString(name v)                                       \
-    {                                                                         \
-        switch (v)                                                            \
-        {                                                                     \
-            BOOST_PP_SEQ_FOR_EACH(                                            \
-                X_DEFINE_ENUM_WITH_STRING_CONVERSIONS_TOSTRING_CASE,          \
-                name,                                                         \
-                enumerators                                                   \
-            )                                                                 \
-            default: return "[Unknown " BOOST_PP_STRINGIZE(name) "]";         \
-        }                                                                     \
+#define OD_DEFINE_ENUM_WITH_STRING_CONVERSIONS(name, enumerators)
+    enum name
+    {
+        BOOST_PP_SEQ_ENUM(enumerators)                                        
+    };                                                                        
+                                                                              
+    inline const char* enumToString(name v)                                   
+    {                                                                         
+        switch (v)                                                            
+        {                                                                     
+            BOOST_PP_SEQ_FOR_EACH(                                            
+                X_DEFINE_ENUM_WITH_STRING_CONVERSIONS_TOSTRING_CASE,          
+                name,                                                         
+                enumerators                                                   
+            )                                                                 
+            default: return "[Unknown " BOOST_PP_STRINGIZE(name) "]";         
+        }                                                                     
     }
+
 
 
 namespace od
@@ -151,7 +152,9 @@ namespace od
 
 
     double getDuration()
-    { return duration_; }
+    { 
+      return duration_;
+    }
 
     static void printTime(double duration)
     {
@@ -223,43 +226,50 @@ namespace od
     static void getFilesInDirectoryInternal(bf::path &dir, std::string &rel_path_so_far, std::vector<std::string> &relative_paths, std::vector<std::string> exts)
     {
       bf::directory_iterator end_itr;
-      for(bf::directory_iterator itr(dir); itr != end_itr; ++itr) {
-        //check if its a directory, then get models in it
-        if(bf::is_directory(*itr)) {
-#if BOOST_FILESYSTEM_VERSION == 3
-          std::string so_far = rel_path_so_far + (itr->path().filename()).string() + "/";
-#else
+      for(bf::directory_iterator itr(dir); itr != end_itr; ++itr)
+      {
+
+        /** check if its a directory, then get models in it
+          */
+        if(bf::is_directory(*itr))
+        {
+          #if BOOST_FILESYSTEM_VERSION == 3
+            std::string so_far = rel_path_so_far + (itr->path().filename()).string() + "/";
+          #else
             std::string so_far = rel_path_so_far + (itr->path ()).filename () + "/";
-#endif
+          #endif
 
           bf::path curr_path = itr->path();
           getFilesInDirectoryInternal(curr_path, so_far, relative_paths, exts);
-        } else {
-          //check that it is a ply file and then add, otherwise ignore..
+        }
+        else
+        {
+          /**check that it is a ply file and then add, otherwise ignore.
+            */
           std::vector<std::string> strs;
-#if BOOST_FILESYSTEM_VERSION == 3
-          std::string file = (itr->path().filename()).string();
-#else
+          #if BOOST_FILESYSTEM_VERSION == 3
+            std::string file = (itr->path().filename()).string();
+          #else
             std::string file = (itr->path ()).filename ();
-#endif
+          #endif
 
           boost::split(strs, file, boost::is_any_of("."));
           std::string extension = strs[strs.size() - 1];
 
           bool flagfound = false;
           for (int exti = 0; exti < exts.size(); exti ++)
-            if(file.rfind(exts[exti]) != std::string::npos)
-            { flagfound = true; break; }
+              if(file.rfind(exts[exti]) != std::string::npos)
+                  { flagfound = true; break; }
 
           if( flagfound == true )
           {
-#if BOOST_FILESYSTEM_VERSION == 3
-            std::string path = rel_path_so_far + (itr->path().filename()).string();
-#else
+            #if BOOST_FILESYSTEM_VERSION == 3
+              std::string path = rel_path_so_far + (itr->path().filename()).string();
+            #else
               std::string path = rel_path_so_far + (itr->path ()).filename ();
-#endif
-            std::string fullpath = rel_path_so_far + itr->path().string();
-            relative_paths.push_back(fullpath);
+            #endif
+          std::string fullpath = rel_path_so_far + itr->path().string();
+          relative_paths.push_back(fullpath);
           }
         }
       }
@@ -268,36 +278,40 @@ namespace od
     static void getFilesInDirectoryInternal(bf::path &dir, std::string &rel_path_so_far, std::vector<std::string> &relative_paths, std::string const &ext)
     {
       bf::directory_iterator end_itr;
-      for(bf::directory_iterator itr(dir); itr != end_itr; ++itr) {
+      for(bf::directory_iterator itr(dir); itr != end_itr; ++itr)
+      {
         //check if its a directory, then get models in it
-        if(bf::is_directory(*itr)) {
-#if BOOST_FILESYSTEM_VERSION == 3
-          std::string so_far = rel_path_so_far + (itr->path().filename()).string() + "/";
-#else
+        if(bf::is_directory(*itr))
+        {
+          #if BOOST_FILESYSTEM_VERSION == 3
+            std::string so_far = rel_path_so_far + (itr->path().filename()).string() + "/";
+          #else
             std::string so_far = rel_path_so_far + (itr->path ()).filename () + "/";
-#endif
+          #endif
 
           bf::path curr_path = itr->path();
           getFilesInDirectoryInternal(curr_path, so_far, relative_paths, ext);
-        } else {
+        }
+        else
+        {
           //check that it is a ply file and then add, otherwise ignore..
           std::vector<std::string> strs;
-#if BOOST_FILESYSTEM_VERSION == 3
-          std::string file = (itr->path().filename()).string();
-#else
+          #if BOOST_FILESYSTEM_VERSION == 3
+            std::string file = (itr->path().filename()).string();
+          #else
             std::string file = (itr->path ()).filename ();
-#endif
+          #endif
 
           boost::split(strs, file, boost::is_any_of("."));
           std::string extension = strs[strs.size() - 1];
 
           if( file.rfind(ext) != std::string::npos )
           {
-#if BOOST_FILESYSTEM_VERSION == 3
-            std::string path = rel_path_so_far + (itr->path().filename()).string();
-#else
+            #if BOOST_FILESYSTEM_VERSION == 3
+              std::string path = rel_path_so_far + (itr->path().filename()).string();
+            #else
               std::string path = rel_path_so_far + (itr->path ()).filename ();
-#endif
+            #endif
             std::string fullpath = rel_path_so_far + itr->path().string();
             relative_paths.push_back(fullpath);
           }
@@ -308,36 +322,40 @@ namespace od
     static void getFilesInDirectory(bf::path &dir, std::string &rel_path_so_far, std::vector<std::string> &relative_paths, std::string const &ext)
     {
       bf::directory_iterator end_itr;
-      for(bf::directory_iterator itr(dir); itr != end_itr; ++itr) {
+      for(bf::directory_iterator itr(dir); itr != end_itr; ++itr)
+      {
         //check if its a directory, then get models in it
-        if(bf::is_directory(*itr)) {
-#if BOOST_FILESYSTEM_VERSION == 3
-          std::string so_far = rel_path_so_far + (itr->path().filename()).string() + "/";
-#else
+        if(bf::is_directory(*itr))
+        {
+          #if BOOST_FILESYSTEM_VERSION == 3
+            std::string so_far = rel_path_so_far + (itr->path().filename()).string() + "/";
+          #else
             std::string so_far = rel_path_so_far + (itr->path ()).filename () + "/";
-#endif
+          #endif
 
           bf::path curr_path = itr->path();
           getFilesInDirectoryInternal(curr_path, so_far, relative_paths, ext);
-        } else {
+        }
+        else
+        {
           //check that it is a ply file and then add, otherwise ignore..
           std::vector<std::string> strs;
-#if BOOST_FILESYSTEM_VERSION == 3
-          std::string file = (itr->path().filename()).string();
-#else
+          #if BOOST_FILESYSTEM_VERSION == 3
+            std::string file = (itr->path().filename()).string();
+          #else
             std::string file = (itr->path ()).filename ();
-#endif
+          #endif
 
           boost::split(strs, file, boost::is_any_of("."));
           std::string extension = strs[strs.size() - 1];
 
           if( file.rfind(ext) != std::string::npos )
           {
-#if BOOST_FILESYSTEM_VERSION == 3
-            std::string path = rel_path_so_far + (itr->path().filename()).string();
-#else
+            #if BOOST_FILESYSTEM_VERSION == 3
+              std::string path = rel_path_so_far + (itr->path().filename()).string();
+            #else
               std::string path = rel_path_so_far + (itr->path ()).filename ();
-#endif
+            #endif
             std::string fullpath = rel_path_so_far + itr->path().string();
             relative_paths.push_back(path);
           }
