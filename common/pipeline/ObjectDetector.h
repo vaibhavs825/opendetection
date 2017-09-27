@@ -50,8 +50,7 @@ namespace od
     IMAGE_GLOBAL_CLASSIFICATION,
   };
 
-  /** \brief The common class for detectors. Both Trainers and Detectors drerives from this and therefore, all the common data/functionalities of Trainers and Detectors should go here.
-  *
+  /** \brief The common class for detectors. Both Trainers and Detectors derives from this and therefore, all the common data/functionalities of Trainers and Detectors should go here.
   *
   * \author Kripasindhu Sarkar
   *
@@ -63,24 +62,23 @@ namespace od
 
     ODDetectorCommon( std::string const &trained_data_location_="") : trained_data_location_(trained_data_location_)
     {
-      std::string clasname = typeid(this).name();
-      TRAINED_DATA_ID_ = clasname;
-      std::transform(clasname.begin(), clasname.end(), clasname.begin(), ::toupper);
-      TRAINED_LOCATION_DENTIFIER_  = clasname;
+      std::string classname = typeid(this).name();
+      TRAINED_DATA_ID_ = classname;
+      std::transform(classname.begin(), classname.end(), classname.begin(), ::toupper);
+      TRAINED_LOCATION_DENTIFIER_  = classname;
     }
 
     virtual void init() = 0;
 
 
-    /** \brief Gets/Sets the directory containing the data for training. The trainer uses the data from directory for training. Detectors can use this location to get additional information in its detection algirhtms as well.
+    /** \brief Gets/Sets the directory containing the data for training. The trainer uses the data from directory for training.
+     * Detectors can use this location to get additional information in its detection algirhtms as well.
       */
     std::string getTrainingInputLocation() const
     {
       return training_input_location_;
     }
 
-    /** \brief Gets/Sets the directory containing the data for training. The trainer uses the data from directory for training. Detectors can use this location to get additional information in its detection algirhtms as well.
-      */
     void setTrainingInputLocation(std::string training_input_location_)
     {
       this->training_input_location_ = training_input_location_;
@@ -133,7 +131,6 @@ namespace od
 
   /** \brief This is the main class for object detection and recognition.
    *
-   *
    * \author Kripasindhu Sarkar
    *
    */
@@ -164,16 +161,6 @@ namespace od
       this->always_train_ = always_train_;
     }
 
-    std::string getTrainingInputLocation() const
-    {
-      return training_input_location_;
-    }
-
-    void setTrainingInputLocation(std::string training_input_location_)
-    {
-      this->training_input_location_ = training_input_location_;
-    }
-
     std::string getTrainingDataLocation() const
     {
       return training_data_location_;
@@ -196,7 +183,6 @@ namespace od
 
     virtual int train() = 0;
 
-
     virtual int detect(ODScene *scene, std::vector<ODDetection *> detections) {}
 
     virtual ODDetection* detect(ODScene *scene) {}
@@ -207,7 +193,6 @@ namespace od
     bool always_train_;
     bool trained_;
     std::string training_input_location_, training_data_location_;
-
     std::string TRAINED_DATA_EXT_, TRAINED_DATA_IDENTIFIER_;
   };
 
